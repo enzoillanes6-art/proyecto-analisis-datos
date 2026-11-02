@@ -1,188 +1,65 @@
-# Evolución del Turismo Nacional e Internacional
+# Proyecto 14: Evolución del Turismo Nacional e Internacional
 
-## Portada
-- Institución: Universidad Autonoma
-- Curso: Programación Avanzada
-- Título del proyecto: Evolución del Turismo Nacional e Internacional
-- Nombre de los integrantes: Enzo Illanes, Benjamin Aguayo y Jaime Panguinao
-- Docente: Alex Flores Fuentealba
-- Fecha de entrega: 27 de octubre de 2026
-- Enlace al repositorio: https://github.com/enzoillanes6-art/proyecto-analisis-datos
+- **Institución:** Universidad Autónoma de Chile · **Asignatura:** Programación Avanzada
+- **Docente:** Alex Flores Fuentealba
+- **Integrantes:** Benjamín Aguayo, Enzo Illanes, Jaime Panguinao
+- **Repositorio:** https://github.com/BenjaAgx/proyecto-analisis-datos
+- **Avance actual:** Avance 2 – Limpieza y transformación de datos
 
-## Descripción del problema
-El turismo es una actividad económica clave para el desarrollo regional y nacional, pero su comportamiento cambia según la temporada, la región y la nacionalidad de los visitantes. Esta variación afecta la planificación del servicio, la ocupación de alojamientos y la toma de decisiones por parte de la autoridad y del sector privado. El problema que se investiga es la falta de una visión clara sobre la tendencia del flujo turístico en los últimos años y la necesidad de proyectar la demanda esperada para el próximo período.
+## Descripción
+Análisis de la matriz de movilidad turística comunal (SERNATUR / INE) para identificar tendencias
+y estacionalidad del flujo de visitantes. Este avance deja el dataset listo para el análisis
+mediante un pipeline reproducible en Python + Pandas.
 
-La pregunta principal del proyecto es: ¿Qué tendencia presenta el turismo en los últimos años? El objetivo general es analizar la evolución del flujo de turistas nacionales e internacionales, identificar estacionalidad y comparar regiones para proyectar la cantidad esperada para el próximo año. Los objetivos específicos son: (1) calcular visitantes promedio por mes, (2) identificar temporadas de mayor demanda, (3) comparar el comportamiento entre regiones y nacionalidades, y (4) proyectar la cantidad esperada de visitantes para el próximo año.
-
-Los usuarios potenciales de estos resultados son autoridades públicas de turismo, operadores de alojamiento, agencias de viajes, municipios y comunidades dependientes del turismo. Las decisiones que pueden apoyarse con este análisis incluyen campañas de promoción, programación operativa, planificación de infraestructura y estrategias de temporada.
-
-## Fuente de datos
-El dataset oficial consolidado y procesado a partir de los registros del Servicio Nacional de Turismo (SERNATUR) y Pasos Fronterizos se encuentra en la ruta datos/dataset.csv.
-
-| Elemento | Información del proyecto |
-|---|---|
-| Nombre del conjunto de datos | Evolución del turismo nacional e internacional |
-| Organización responsable | Proyecto académico |
-| URL o ubicación del archivo | datos/dataset.csv |
-| Fecha de consulta | 2026-10-24 |
-| Formato | CSV (separado por comas, codificación UTF-8) |
-| Cantidad aproximada de registros | 95375 |
-| Cantidad de variables | 27 |
-| Período cubierto | 2021-2025 |
-| Licencia o condición de uso | Uso académico y sintético |
-| Frecuencia de actualización | Mensual |
-| Limitaciones detectadas | Agregación a nivel regional/macrozonal para resguardo de confidencialidad |
-
-## Diccionario de datos
-
-| Variable | Descripción | Tipo original | Tipo esperado | Unidad o formato | Valores permitidos | ¿Permite nulos? | Ejemplo |
-|---|---|---|---|---|---|---|---|
-| año | Año de la observación | int | int64 | YYYY | 2021-2025 | No | 2024 |
-| mes | Mes del registro | str | object | Texto | Enero-Diciembre | No | Enero |
-| region | Región o macrozona de destino | str | object | Texto | Metropolitana, Norte, Centro, Sur | No | Metropolitana |
-| nacionalidad | Clasificación del visitante | str | object | Texto | Nacional, Internacional | No | Internacional |
-| visitantes | Cantidad total de ingresos | int | int64 | Personas | Enteros positivos (≥ 0) | No | 24500 |
-| pernoctaciones | Estimación de noches reservadas | int | int64 | Noches | Enteros positivos (≥ 0) | Sí | 54000 |
-| tasa_ocupacion | Porcentaje medio de ocupación | float | float64 | Porcentaje (%) | 0.0 - 100.0 | Sí | 62.4 |
-| temporada | Categoría de la estación | str | object | Texto | Alta, Media, Baja | No | Alta |
-
-## Diseño del pipeline
-```text
-Fuente de datos
-      ↓
-Descarga o recepción
-      ↓
-Almacenamiento en datos/
-      ↓
-Carga con Pandas
-      ↓
-Validación de estructura
-      ↓
-Limpieza y transformación
-      ↓
-Análisis exploratorio
-      ↓
-Visualización
-      ↓
-Interpretación
-      ↓
-Informe final
+## Pipeline
+```
+datos/originales/dataset.csv  (solo lectura)
+   ↓ carga.py            Lectura (sep ';', latin-1, decimal ',')
+   ↓ validaciones.py     Diagnóstico inicial (nulos, duplicados, fuera de rango)
+   ↓ limpieza.py         Nombres de columnas, espacios, categorías, rangos, duplicados
+   ↓ limpieza.py         Tratamiento de nulos (estrategia por variable)
+   ↓ transformaciones.py Tipos, fecha, total_anual, mes_pico, pct_verano, es_intrarregional, nivel_flujo
+   ↓ validaciones.py     Validación de columnas, tipos y rangos
+   ↓ carga.py            datos/procesados/dataset_limpio.csv
 ```
 
-| Etapa | Entrada | Proceso | Salida | Herramienta |
-|---|---|---|---|---|
-| Obtención | Fuente original | Generar o recopilar datos | Archivo CSV | CSV local |
-| Carga | Archivo original | Leer archivo | DataFrame | Pandas |
-| Validación | DataFrame | Revisar estructura y tipos | Diagnóstico inicial | Pandas |
-| Limpieza | Datos originales | Corregir nulos y duplicados | Datos limpios | Pandas |
-| Análisis | Datos limpios | Calcular indicadores | Resultados | Pandas y NumPy |
-| Visualización | Resultados | Crear gráficos | Figuras | Matplotlib |
-| Reporte | Resultados y figuras | Interpretar hallazgos | Informe final | PDF |
-
-El proyecto combina un enfoque de análisis exploratorio con una proyección anual de visitantes. Se almacenan los datos en la carpeta `datos/`, se validan columnas y tipos con Pandas, y se evaluarán valores nulos, duplicados y anomalías. Las transformaciones esperadas incluyen limpieza de columnas, estandarización de categorías y agregación por mes y región. Los resultados esperados son estadísticas descriptivas, comparación por zona y proyección para el próximo año.
-
-## Estructura del repositorio
-```text
-proyecto/
+## Estructura
+```
 ├── datos/
-│   ├── dataset.csv
-│   └── README.md
-├── reportes/
-│   └── avance_1.pdf
+│   ├── originales/            # dataset.csv original (no se versiona ni se modifica)
+│   ├── procesados/            # dataset_limpio.csv (+ muestra de 1000 filas)
+│   ├── README.md
+│   └── instrucciones_descarga.txt
+├── reportes/                  # avance_1.pdf, avance_2.pdf y resumen_ejecucion.md (autogenerado)
 ├── src/
 │   ├── __init__.py
-│   └── carga.py
-├── .gitignore
-├── README.md
-├── requirements.txt
+│   ├── carga.py               # lectura y escritura de archivos
+│   ├── limpieza.py            # normalización, duplicados, rangos y nulos
+│   ├── transformaciones.py    # conversión de tipos y variables nuevas
+│   ├── validaciones.py        # diagnóstico y validación de columnas, tipos y rangos
+│   └── reporte.py             # bitácora de cambios y resumen en Markdown
 ├── main.py
+└── requirements.txt
 ```
 
-## Ejecución
-1. Instalar dependencias: `pip install -r requirements.txt`
-2. Ejecutar: `python main.py`
+## Instrucciones de ejecución
+1. Clonar: `git clone https://github.com/BenjaAgx/proyecto-analisis-datos.git && cd proyecto-analisis-datos`
+2. Descargar `dataset.csv` (164 MB) desde el enlace de `datos/instrucciones_descarga.txt` y guardarlo en `datos/originales/dataset.csv`.
+3. Instalar dependencias: `pip install -r requirements.txt`
+4. Ejecutar desde la raíz: `python main.py`
 
-## Dependencias
-```text
-pandas
-```
+Salidas: `datos/procesados/dataset_limpio.csv` y `reportes/resumen_ejecucion.md`
+(tablas de diagnóstico, nulos, transformaciones y comparación antes/después para el informe).
 
-## Conclusión
-La fuente seleccionada permite abordar el problema porque ofrece una estructura útil para estudiar la evolución del turismo por año, mes, región y nacionalidad. El conjunto presenta variables relevantes para responder la pregunta principal, como visitantes, pernoctaciones, tasa de ocupación y estacionalidad. Los problemas iniciales esperados incluyen valores faltantes, registros duplicados y posibles inconsistencias de texto en categorías. En la siguiente etapa se realizará una limpieza más profunda, un análisis exploratorio por mes y región y una proyección del flujo turístico para el próximo año.
+## Decisiones de limpieza (resumen)
+| Tema | Decisión |
+| --- | --- |
+| Duplicados exactos | Se elimina la repetición y se conserva la primera |
+| Identificadores repetidos (origen-destino-año) | Se informan, no se modifican |
+| Flujos negativos / códigos de región fuera de 1-16 | Pasan a nulo y se tratan como nulos |
+| Año fuera de 2018-2025 o nulo | Se elimina la fila |
+| Códigos y nombres territoriales nulos | Se recuperan desde su par código↔nombre; si no, `desconocido` o se elimina |
+| Meses nulos | Fila sin ningún mes: se elimina. Resto: 0 + columna `n_meses_imputados` |
+| Otras columnas con nulos | Mediana (numéricas) o `desconocido` (texto) |
 
-## Preguntas finales
-- ¿Qué criterio utilizaron para seleccionar el problema? Se priorizó un tema económico y social con fuerte impacto en la planificación regional.
-- ¿Por qué la fuente elegida es adecuada? Porque permite analizar la tendencia del turismo por región y temporada.
-- ¿Qué variable podría generar mayores dificultades durante la limpieza? `pernoctaciones` y `tasa_ocupacion` si contienen valores incompletos o inconsistentes.
-- ¿Qué supuestos están realizando sobre los datos? Que la serie mensual es representativa de la demanda real y que los patrones estacionales se repiten con cierta estabilidad.
-- ¿Qué decisión del pipeline fue más difícil? Definir la fase de agregación y proyección.
-- ¿Qué aprendieron al realizar la primera carga con Pandas? A revisar la estructura, los nulos y los tipos antes del análisis.
-- ¿Qué error apareció durante la implementación? Una ruta o importación incorrecta al iniciar el programa.
-- ¿Cómo resolvieron ese error? Validando la estructura del proyecto desde la raíz y corrigiendo la importación.
-- ¿Cómo distribuyeron las tareas dentro del equipo? Se dividieron roles entre documentación, datos y ejecución del programa.
-- ¿Qué evidencia demuestra que el proyecto puede continuar? La carga inicial funciona y muestra columnas, tipos y nulos correctamente.
-
-## Evidencia de ejecución
-Iniciando proceso de carga del proyecto de Turismo...
-Carga exitosa. Ejecutando diagnóstico inicial...
-
-==================================================
-           RESULTADOS DE LA INSPECCIÓN            
-==================================================
-
-[1] Dimensiones del conjunto de datos (Filas, Columnas):
-(1500, 9)
-
-[2] Nombres de las columnas:
-['id_registro', 'fecha', 'origen', 'region_destino', 'tipo_turista', 'cantidad_visitantes', 'gasto_diario_usd', 'duracion_estadia', 'es_temporada_alta']
-
-[3] Tipos de datos por columna:
-id_registro              int64
-fecha                   object
-origen                  object
-region_destino          object
-tipo_turista            object
-cantidad_visitantes      int64
-gasto_diario_usd       float64
-duracion_estadia         int64
-es_temporada_alta       object
-dtype: object
-
-[4] Primeros 5 registros:
-   id_registro        fecha     origen region_destino   tipo_turista  cantidad_visitantes  gasto_diario_usd  duracion_estadia es_temporada_alta
-0         1001   2024-01-10  Argentina     Valparaíso  Internacional                    3              85.5                 7              True
-1         1002   2024-01-11     Brasil  Metropolitana  Internacional                    2             120.0                 5              True
-2         1003   2024-01-12  Chile (RM) Antofagasta       Nacional                    1               NaN                 3             False
-3         1004   2024-01-12     EE.UU.    Magallanes  Internacional                    4             210.0                10              True
-4         1005   2024-01-13  Chile (Sur) Valparaíso       Nacional                    2              45.0                 4             False
-
-[5] Conteo de valores nulos por columna:
-id_registro             0
-fecha                   0
-origen                  0
-region_destino          0
-tipo_turista            0
-cantidad_visitantes     0
-gasto_diario_usd       28
-duracion_estadia        0
-es_temporada_alta       0
-dtype: int64
-
-[6] Cantidad de filas duplicadas:
-5
-
-[7] Resumen estadístico descriptivo:
-        id_registro cantidad_visitantes  gasto_diario_usd  duracion_estadia
-count   1500.000000         1500.000000       1472.000000       1500.000000
-mean    1750.500000            2.450000         98.200000          6.100000
-std      433.157016            1.120000         52.400000          3.800000
-min     1001.000000            1.000000         15.000000          1.000000
-25%     1375.750000            1.000000         55.000000          3.000000
-50%     1750.500000            2.000000         88.000000          5.000000
-75%     2125.250000            3.000000        135.000000          8.000000
-max     2500.000000            8.000000        450.000000         30.000000
-==================================================
-==================================================
-
-Este proyecto sirve como base para continuar con análisis estadístico, identificación de estacionalidad y proyección del turismo nacional e internacional.
-
+Toda eliminación y corrección queda registrada en `reportes/resumen_ejecucion.md`.
